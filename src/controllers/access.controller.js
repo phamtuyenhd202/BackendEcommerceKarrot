@@ -16,6 +16,16 @@ class AccessController{
       
 
     }
+
+    //login
+    logout = async (req, res, next) => {
+        console.log('req.keyStore controller::::: ', req.keyStore)
+        new SuccessResponse({
+            message: 'Logout Success!',
+            metadata: await AccessService.logout(req.keyStore),
+        }).send(res)
+    }
+
  //signUp   
     signUp = async (req, res, next) => {
         

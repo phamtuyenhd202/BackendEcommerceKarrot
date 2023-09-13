@@ -23,7 +23,6 @@ const apiKey = async (req, res, next) => {
                 message: 'forbinddsen error'
             })
         }
-        console.log('objke:::::: ', objKey)
         req.objKey = objKey
         return next()
 
