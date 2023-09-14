@@ -8,6 +8,20 @@ const { CREATED, SuccessResponse } = require('../core/success.response')
 
 
 class AccessController{
+
+    //login
+    handlerRefreshToken = async (req, res, next) => {  
+        new SuccessResponse ({
+            message: 'Get toKen success!!',
+            metadata: await AccessService.handlerRefreshToken({
+                keyStore: req.keyStore,
+                user: req.user,
+                refreshToken: req.refreshToken
+            }),      
+         }).send(res)
+      
+
+    }
     //login
     login = async (req, res, next) => {  
         new SuccessResponse ({ 

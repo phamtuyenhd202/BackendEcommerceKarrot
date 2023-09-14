@@ -6,9 +6,11 @@ const KeyTokenService = require("./keyToken.service")
 const { createTokenPair } = require("../auth/authUtils")
 const { Console } = require("console")
 const { getInfoData } = require("../utils")
-const { BadRequestError } = require("../core/error.response")
+const { BadRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response")
 
 const { findByEmail } = require("./shop.service")
+
+
 
 
 
@@ -20,6 +22,38 @@ const roleShop = {
 }
 
 class AccessService {
+
+    static handlerRefreshToken = async ({keyStore, user, refreshToken }) => {
+        const { userId, email } = user
+        // kiem tra refreshToken co trong refreshTokensUsed khoong
+        if(keyStore.refreshTokensUsed.includes(refreshToken)) {
+            //neu co del keytoken
+            await KeyTokenService.deleteByUserId( userId )
+            throw new ForbiddenError('Something wrng happen !! pls relogin')
+        }
+
+        //kiem tra refreshToken dang hop le vaf refreshToken truyen voa de xem co shop do trong db khong
+        if( keyStore.refreshToken !== refreshToken ) throw new AuthFailureError('Shop not regitstered!!')
+
+        const foundShop = await findByEmail({ email })
+        if(!foundShop) throw new AuthFailureError('Shop not regitstered!!')
+        // toa tokens
+        const tokens = await createTokenPair({ userId, email}, keyStore.publicKey, keyStore.privateKey)
+        //add refreshToken in refreshTokensUsed
+        await keyStore.updateOne({
+            $set: {
+                refreshToken: tokens.refreshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshToken
+            }
+        })
+
+        return {
+            user: { userId, email },
+            tokens
+        }
+    }
     
         /*
             1. check email
@@ -80,7 +114,6 @@ class AccessService {
              })
          
              
- 
              if(newShop){             
                  //create privateKey and publicKey
                  const  privateKey = crypto.randomBytes(64).toString('hex')
