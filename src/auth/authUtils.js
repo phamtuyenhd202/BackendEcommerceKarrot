@@ -49,7 +49,7 @@ const authentication = asyncHandler( async (req, res, next) =>{
     if(!userId) throw new AuthFailureError('Invalid Request')
 
     const keyStore = await KeyTokenService.findKeyTokenById(userId)
-    
+    console.log('keyStore:::::: ', keyStore)
     if(!keyStore) throw new NotFoundError('Not Found keyStore')
 
     if(req.headers[HEADER.REFRESHTOKEN]){
@@ -79,6 +79,7 @@ const authentication = asyncHandler( async (req, res, next) =>{
         if(userId !== decodeUser.userId) throw new AuthFailureError('Invalid UserId')
 
         req.keyStore = keyStore
+        req.user = decodeUser
 
         return next()
 
