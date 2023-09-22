@@ -7,6 +7,8 @@ const { authentication } = require('../../auth/authUtils')
 
 //full text search
 router.get('/search/:keySearch', asyncHandler(ProductController.getListSearchProduct))
+router.get('/:product_id', asyncHandler(ProductController.getProductDetail))
+router.get('', asyncHandler(ProductController.getAllProduct))
 
 
 // middleware authentication
