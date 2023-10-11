@@ -68,14 +68,10 @@ class DiscountService{
 
     //update discount
     static async updateDiscountCode(discount_id, bodyUpdate){
-        console.log('bodyUpdate:::: ', bodyUpdate)
-        console.log('discount_id:::', discount_id)
         const objectParams = removeUndefinedObject(bodyUpdate)
-        console.log('objectParams:::: ', objectParams   )
 
         // return await updateDiscountCodeById({_id: discount_id, objectParams, model: discountModel})
         const updateDicount = await updateDiscountCodeById({_id: discount_id, bodyUpdate: objectParams, model: discountModel})
-        console.log('updateDicount::::: ', updateDicount)
 
         return updateDicount
     }
@@ -84,7 +80,6 @@ class DiscountService{
         code, shopId, limit, page
     }){
 
-        console.log("code:::: shopId:::", code, shopId)
         const foundDiscount = await checkDiscountExists({
             model: discountModel,
             filter: {
@@ -104,6 +99,7 @@ class DiscountService{
         let products
         if(discount_applies_to === 'all'){
             //get all product
+            console.log('alll::::', foundDiscount)
             products = await findAllProduct({
                 filter:{
                     product_shop: convertToObjectIdMongodb(shopId),
